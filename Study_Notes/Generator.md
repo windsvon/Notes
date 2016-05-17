@@ -1,0 +1,1 @@
+##ECMAScript 6中的Generator函数
