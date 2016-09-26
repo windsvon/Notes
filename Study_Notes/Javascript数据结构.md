@@ -25,7 +25,7 @@
 	}
 ```
 
-###1、append: 给列表添加元素
+* 1、append: 给列表添加元素
 
 ```js
 	function append(element) {
@@ -33,7 +33,7 @@
 	}
 ```
 
-###2、find: 在列表中查找某一元素
+* 2、find: 在列表中查找某一元素
 
 ```js
 	function find(element) {
@@ -46,7 +46,7 @@
 	}
 ```
 
-###3、remove: 从列表中删除元素
+* 3、remove: 从列表中删除元素
 
 ```js
 	function remove(element) {
@@ -60,7 +60,7 @@
 	}
 ```
 
-###4、length: 列表中有多少个元素
+* 4、length: 列表中有多少个元素
 
 ```js
 	function length() {
@@ -68,7 +68,7 @@
 	}
 ```
 
-###5、toString: 显示列表中的元素
+* 5、toString: 显示列表中的元素
 
 ```js
 	function toString() {
@@ -76,7 +76,7 @@
 	}
 ```
 
-###6、insert: 向列表中插入一个元素
+* 6、insert: 向列表中插入一个元素
 
 ```js
 	function insert(element, after) {
@@ -90,7 +90,7 @@
 	}
 ```
 
-###7、clear: 清空列表中所有的元素
+* 7、clear: 清空列表中所有的元素
 
 ```js
 	function clear() {
@@ -100,7 +100,7 @@
 	}
 ```
 
-###8、contains: 判断给定值是否在列表中
+* 8、contains: 判断给定值是否在列表中
 
 ```js
 	function contains(element) {
@@ -113,7 +113,7 @@
 	}
 ```
 
-###9、遍历列表
+* 9、遍历列表
 
 ```js
 	function front() {
@@ -286,9 +286,9 @@
 	}
 ```
 
-* 应用1： 使用队列对数据进行排序（基数排序）
+* **应用1： 使用队列对数据进行排序（基数排序）**
 
-	原理：将数据集扫描两次，第一次按个位上的数字进行排序，第二次按十位上的数字进行排序。
+	**原理：将数据集扫描两次，第一次按个位上的数字进行排序，第二次按十位上的数字进行排序。**
 	
 	第一步： 定义一个函数，根据相应位（个位或十位）上的数值，将数字分配到相应队列的函数：
 	
@@ -337,3 +337,258 @@
 		collect(queues, nums);
 		console.log(nums)
 	```
+
+##实现链表
+
+链表是由一组节点组成的集合。每个节点都使用一个对象的引用指向它的后继。指向另一个节点的引用叫做链。链表的优势主要在于可以**高效率地插入和删除节点**。
+
+此处设计链表包含两个类，Node类用来表示节点，LinkedList类提供了插入节点、删除节点、显示列表元素的方法，以及其他一些辅助方法。
+
+* 1、Node类
+
+```js
+	function Node(element) {
+		this.element = element;
+		this.next = null;
+	}
+```
+
+* 2、LinkedList类
+
+```js
+	function LList() {
+		this.head = new Node("head");
+		this.find = find;
+		this.insert = insert;
+		this.remove = remove;
+		this.display = display;
+	}
+	
+	//查找节点
+	
+	function find(item) {
+		var currNode = this.head;
+		while (currNode.element != item) {
+			currNode = currNode.next;
+		}
+		return currNode;
+	}
+	
+	function insert(newElement, item) {
+		var newNode = new Node(newElement);
+		var current = this.find(item);
+		newNode.next = current.next;
+		current.next = newNode;
+	}
+	
+	//删除节点时，需要找到待删除节点的前一个节点，修改其next属性，使其指向待删除节点的下一个节点。因此需要定义一个findPrevious()方法，检查每一个节点的下一个节点中是否存储着待删除数据。如果找到，返回该节点。
+	
+	function findPrevious(item) {
+		var currNode = this.head;
+		while (!(currNode.next == null) && (currNode.next.element != item)) {
+			currNode = currNode.next;
+		}
+		return currNode;
+	}
+	
+	// 删除节点
+	
+	function remove(item) {
+		var prevNode = this.findPrevious(item);
+		if (!(prevNode.next) == null) {
+			prevNode.next = prevNode.next.next;
+		}
+	}
+	
+```
+
+##双向链表
+
+由于单向链表只能从头到尾遍历，因此有时需要引入双向链表，通过给Node对象增加一个属性，该属性存储指向前驱节点的链接。
+
+```js
+	function Node(element) {
+		this.element = element;
+		this.next = null;
+		this.previous = null;
+	}
+	
+	function LList() {
+		this.head = new Node("head");]
+		this.find = find;
+		this.insert = insert;
+		this.display = display;
+		this.remove = remove;
+		this.findLast = findLast;
+		this.dispReverse = dispReverse;
+	}
+	
+	function dispReverse() {
+		var currNode = this.head;
+		currNode = this.findLast();
+		while (!(currNode.previous == null)) {
+			console.log(currNode.element);
+			currNode = currNode.previous;
+		}
+	}
+	
+	function findLast() {
+		var currNode = this.head;
+		while (!(currNode.next == null)) {
+			currNode = currNode.next;
+		}
+		return currNode;
+	}
+	
+	function remove(item) {
+		var currNode = this.find(item);
+		if (!(currNode.next == null)) {
+			currNode.previous.next = currNode.next;
+			currNode.next.previous = currNode.previous;
+			currNode.next = null;
+			currNode.previous = null;
+		}
+	}
+	
+	function display() {
+		var currNode = this.head;
+		while (!(currNode.next == null)) {
+			console.log(currNode.next.element);
+			currNode = currNode.next;
+		}
+	}
+	
+	function find(item) {
+		var currNode = this.head;
+		while (currNode.element != item) {
+			currNode = currNode.next;
+		}
+		return currNode;
+	}
+	
+	function insert(newElement, item) {
+		var newNode = new Node(newElement);
+		var current = this.find(item);
+		newNode.next = current.next;
+		newNode.previous = current;
+		current.next = newNode;
+	}
+```
+
+##循环链表
+
+循环链表和单向链表唯一的区别是，在创建循环列表时，让其头节点的next属性指向它本身。
+
+```js
+	function LList() {
+		this.head = new Node("head");
+		this.head.next = this.head;
+		this.find = find;
+		this.insert = insert;
+		this.display = display;
+		this.findPrevious = findPrevious;
+		this.remove = remove;
+	}
+```
+
+循环链表中的一些方法也需要修改，避免出现死循环，例如display()方法：
+
+```js
+	function display() {
+		var currNode = this.head;
+		while (!(currNode.next == null) && !(currNode.next.element == “head”)) {
+			console.log(currNode.next.element);
+			currNode = currNode.next;
+		}
+	}
+```
+
+
+
+##字典
+
+```js
+	function Dictionary() {
+	    this.add = add;
+	    this.datastore = new Array();
+	    this.find = find;
+	    this.remove = remove;
+	    this.showAll = showAll;
+	}
+	
+	function add(key, value) {
+	    this.datastore[key] = value;
+	}
+	
+	function find(key) {
+	    return this.datastore[key];
+	}
+	
+	function remove(key) {
+	    delete this.datastore[key];
+	}
+	
+	function showAll() {
+	    console.log(this.datastore)
+	    console.log(Object.keys(this.datastore))
+	    for (var key of Object.keys(this.datastore)) {
+	        console.log(key + "->" + this.datastore[key])
+	    }
+	}
+```
+
+用数组而不是对象来储存数据是因为对象里的键值对无法排序，但是当数组中键的类型为字符串时，length属性就失效了。此时应该定义一个获取dictionary长度的方法：
+
+```js
+	function count() {
+		var n = 0;
+		for (var key of Object.keys(this.datastore)) {
+			++n;
+		}
+		return n;
+	}
+```
+
+清除数据中的内容：
+
+```js
+	function clear() {
+		var each (var key of Object.keys(this.datastore)) {
+			delete this.datastore[key];
+		}
+	}
+```
+
+* 为Dictionary类添加排序功能
+
+	和length()方法一样，使用字符串作为键的数组的排序sort()方法是无效的。如果想使现实内容时结果是有序的，只能在showAll()方法中对键进行排序。
+
+```js
+	function showAll() {
+		for (var key of Object.keys(this.datastore).sort()) {
+			console.log(key + "->" + this.datastore[key]);
+		}
+	}
+```
+
+##散列（HashTable)
+
+散列的特点：可以快速插入和取用数据，但是查找操作效率低下。
+
+基于数组设计的散列：数组长度必须为质数，预先设定。所有元素根据和该元素对应的键，保存在数组的特定位置。使用散列表存储数据时，通过一个**散列函数**将键映射为一个数字，这个数字的范围是0到散列表的长度。
+
+* 1、定义HashTable类
+
+```js
+	function HashTable() {
+		this.table = new Array(137);
+		this.simpleHash = simpleHash;
+		this.showDistro = showDistro;
+		this.put = put;
+		//this.get = get;
+	}
+```
+
+* 2、选择一个散列函数
+
+	* 如果键是整型，最简单的散列函数就是以数组的长度对键取余。称为除留余数法。
