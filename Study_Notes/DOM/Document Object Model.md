@@ -188,6 +188,122 @@ Javascript通过`Document`类型来代表document节点。在浏览器中，`doc
 * `document.domain`
 * `document.referrer`
 
-### 定位元素
+### 获取元素
+
+* `document.getElementById`
+* `document.getElementsByTagName`
+* ...
+
+### 获取特定种类元素
+
+* `document.anchors`
+* `document.applets`
+* `document.forms`
+* `document.images`
+* `document.links`
 
 
+### Document Writting
+
+通过`document.write()`可以向HTML页面中写入内容，通常被用来引入外部文件例如javascript文件。此时应注意结尾标签的写法，不然会导致无法执行。
+
+```html
+	<html>
+	<head>
+		<title>document.write() Example</title>
+	</head>
+	
+	<body>
+		<script type="text/javascript">
+			document.write("<script type=\"text/javascript\" scr=\"file.js\">" + "<\/script>");
+		</script>
+	</body>
+	
+	</html>
+```
+
+这个例子中`document.write()`是在页面加载过程中执行的，**注意如果页面加载完成后执行`document.write()`会导致页面重新渲染！**
+
+## Element
+
+`element`是web开发中最常见的节点类型，其有如下性质：
+
+* `nodeType` 是 1。
+* `nodeName` 是元素的标签名称。
+* `nodeValue` 是 `null`。
+* `parentNode` 是 `Document` 或者 `Element`。
+* 子节点可能是`Element`, `Text`, `Comment`, `ProcessingInstruction`, `CDATASection`或者`EntityReference`
+
+`element`的标签名称可以通过`nodeName`或者`tagName`来获取，注意获取的标签名称为**全大写！**（例如“DIV”）
+
+### HTML Elements
+
+`HTMLElement`是从`Element`继承而来的，但是添加了一些属性：
+
+* `id`
+* `title`
+* `lang`
+* `dir` -- 文字顺序，`ltr`或者`rtl`
+* `className`
+
+### Getting Attributes
+
+`div.getAttribute(attributeName)`
+
+or
+
+`div.attributeName`
+
+### Setting Attributes
+
+`div.setAttribute(attributeName, attributeValue)`
+
+or
+
+`div.attributeName = attributeValue`
+
+**注意attribute的名称是不区分大小写的，而且IE8之后的浏览器不支持自定义的名称**
+
+### attributes 属性
+
+`Element`具有一个`attributes`属性，其中包含了一个`NameNodeMap`对象。`NameNodeMap`类似于`NodeList`，所有元素的`attribute`都保存为其中的节点。每个节点的`nodeName`和`nodeValue`分别是这个这个`atrtibute`的名称和值。
+
+这个`NameNodeMap`对象具有如下几个方法：
+
+* `getNamedItem(name)` -- 获取`nodeName`为**name**的节点
+* `removeNamedItem(name)` -- 删除`nodeName`为**name**的节点
+* `setNamedItem(node)` -- 添加一个节点
+* `item(pos)` -- 返回某个位置上的节点
+
+### 创建Elements
+
+`document.createElement(tagName)`
+
+### 遍历Element的子元素
+
+```html
+	<ul id="myList">
+		<li>item 1</li>
+		<li>item 2</li>
+		<li>item 3</li>
+	</ul>
+```
+除了IE8以及更早的IE浏览器，其他浏览器中`<ul>`元素被认为有**七个**子节点 -- 三个`element`节点和四个`text`节点（代表元素间的空格），因此当遍历元素的子节点时，需要检验`nodeType`:
+
+```js
+	for var i=0; i<element.childNodes.length; i++ {
+		if (element.childNodes[i].nodeType == 1) {
+			//do processing
+		}
+	}
+```
+
+当`<ul>`只包含一层子节点时，也可以采用如下方法：
+
+```js
+	var ul = document.getElementById("myList");
+	var items = ul.getElementByTagName;
+```
+
+
+## Text
