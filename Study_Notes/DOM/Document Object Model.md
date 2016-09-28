@@ -307,3 +307,202 @@ or
 
 
 ## Text
+
+`Text`节点具有如下特点：
+
+* `nodeType` 是 3
+* `nodeName` 是 ”#text“
+* `nodeValue` 是节点中包含的文本内容
+* `parentNode` 是一个`Element`
+* 不支持`Child nodes`
+
+节点中包含的文本内容既可以通过`nodeValue`也可以通过`data`来获取，以下几个方法可以用来操作节点中的文本内容：
+
+* `appendData(text)` -- 在节点的末尾添加文本
+* `deleteData(offset, count)` -- 从**offset**位置开始删除**count**个字符的文本
+* `insertData(offset, text)` -- 在**offset**处插入文本**text**
+* `replaceData(offset, count, text)` -- 将从**offset**位置开始的**count**个字符替换为**text**
+* `splitText(offset)` -- 将文本从**text**位置分为两段
+* `substringData(offset, count)` -- 将从**offset**位置开始的**count**个字符提取出来
+
+### 改变`text`节点中的内容：
+
+```js
+	div.firstChild.nodeValue = "Some <strong>other</strong> message"
+```
+
+**改变text节点时所使用的字符串中的所有HTML标签都是escaped**
+
+
+### 元素中添加`text`节点：
+
+```js
+	var element = document.createElement("div");
+	element.className = "message";
+	
+	var textNode = document.createTextNode("Hello world");
+	element.appendChild(textNode);
+	
+	document.body.appendChild(element);
+```
+
+### Normalizing Text Nodes
+
+`element`节点具有一个`normalize()`方法，用以合并子元素中相邻的`text`节点
+
+
+```js
+	var element = document.createElement("div");
+	element.className = "message";
+	
+	var textNode = document.createTextNode("Hello world!");
+	element.appendChild(textNode);
+	
+	var anotherTextNode = document.createTextNode("Yippee!");
+	element.appendChild(anotherTextNode);
+	
+	document.body.appendChild(element);
+	
+	alert(element.childNodes.length); //2
+	
+	element.normalize();
+	alert(element.childNodes.length); //1
+	alert(element/firstChild.nodeValue); //"Hello world!Yippee"
+	
+```
+
+
+### Splitting Text Nodes
+
+```js
+	var element = document.createElement("div");
+	element.className = "message";
+	
+	var textNode = document.createTextNode("Hello world!");
+	element.appendChild(textNode);
+	
+	document.body.appendChild(element);
+	
+	var newNode = element.firstChild.splitText(5);
+	alert(element.firstChild.nodeValue);  //"Hello"
+	alert(newNode.nodeValue); //" world!"
+	alert(element.childNodes.length);  //2
+```
+
+## Comment
+
+**待完成**
+
+## CDATASection
+
+**待完成**
+
+## DocumentFragment
+
+**待完成**
+
+## Attr
+
+**待完成**
+
+## 动态加载脚本
+
+###动态加载脚本文件
+
+```js
+	function loadScript(url) {
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		script.src = url;
+		document.body.appendChild(script);
+	}
+	
+	loadScript("script.js");
+```
+
+###动态加载脚本字符串
+
+```js
+	function loadScriptString(code) {
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		try {
+			script.appendChild(document.createTextNode(code));
+		} catch (ex) {
+			script.text = code;
+		}
+		document.body.appendChild(script);
+	};
+	
+	loadScriptString("function sayHi() {alert('hi');}")
+```
+
+## 动态加载css样式
+
+### 动态加载样式文件
+
+```js
+	function loadStyles(url) {
+		var link = document.createElement("link");
+		link.rel = "stylesheet"
+		link.type = "text/css";
+		link.href = url;
+		var head = document.getElementsByTagName("head")[0];
+		head.appendChild(link);
+	}
+	
+	loadStyles("styles.css");
+```
+
+### 动态加载样式字符串
+
+```js
+	function loadStyleString(css) {
+		var style = document.createElement("style");
+		style.type = "text/css";
+		try {
+			style.appendChild(document.createTextNode(css))
+		} catch (ex) {
+			style.styleSheet.cssText = css;
+		}
+		var head = document.getElementsByTagName("head")[0];
+		head.appendChild(style);
+	}
+	
+	loadStyleString("body{background-color: red}");
+```
+
+## Table
+
+**待完成**
+
+## 使用NodeList
+
+`NodeList`对象及其相关的`NamedNodeMap`和`HTMLCollection`都是动态的，也就是说它们会随着文档结构的改变而实时改变。每次访问`NodeList`都是访问它的最新状态。例如下面的代码是无限循环的：
+
+```js
+	var divs = document.getElementByTagName("div"),
+		i,
+		div;
+		
+	for (i=0; i < divs.length; i++) {
+		div = document.createElement("div");
+		document.body.appendChild(div);
+	}
+```
+
+应当修改如下：
+
+```js
+	var divs = document.getElementByTagName("div"),
+		i,
+		len,
+		div;
+		
+	for (i=0, len=divs.length; i < len; i++) {
+		div = document.createElement("div");
+		document.body.appendChild(div);
+	}
+```
+
+由于变量`len`在循环开始时就捕获了`divs.length`的值，在循环过程中不会改变，因此不会出现无限循环。
